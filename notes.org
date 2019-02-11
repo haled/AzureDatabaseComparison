@@ -1,0 +1,83 @@
+* Function App creation
+** Run commands: 
+*** func init AzureDatabaseComparison --docker
+**** Select a worker runtime:  1. dotnet
+Writing /Users/darrenhale/code/github/AzureDatabaseComparison/.vscode/extensions.json
+Writing Dockerfile
+*** cd AzureDatabaseComparison
+*** func extensions install
+** Create the function.json file:
+{
+    "bindings": [
+        {
+          "type": "httpTrigger",
+          "direction": "in",
+          "route": "db",
+          "authLevel": "anonymous"
+        },
+        {
+            "type": "http",
+            "direction": "out"
+        }
+    ]
+}
+** Create a new function:
+*** func new
+Select a template: 
+1. QueueTrigger
+2. HttpTrigger
+3. BlobTrigger
+4. TimerTrigger
+5. DurableFunctionsOrchestration
+6. SendGrid
+7. EventHubTrigger
+8. ServiceBusQueueTrigger
+9. ServiceBusTopicTrigger
+10. EventGridTrigger
+11. CosmosDBTrigger
+12. IotHubTrigger
+Choose option: 
+**** Select a template:  2. HttpTrigger
+**** Function name:  HelloWorld
+HelloWorld
+
+The function "HelloWorld" was created successfully from the "HttpTrigger" template.
+** Run the following command to test it:
+*** func start --build
+Azure Functions Core Tools (2.1.725 Commit hash: 68f448fe6a60e1cade88c2004bf6491af7e5f1df)
+Function Runtime Version: 2.0.12134.0
+Skipping 'AzureWebJobsStorage' from local settings as it's already defined in current environment variables.
+[2/11/19 4:26:25 PM] Building host: startup suppressed:False, configuration suppressed: False
+[2/11/19 4:26:25 PM] Reading host configuration file '/Users/darrenhale/code/github/AzureDatabaseComparison/bin/output/host.json'
+[2/11/19 4:26:25 PM] Host configuration file read:
+[2/11/19 4:26:25 PM] {
+[2/11/19 4:26:25 PM]   "version": "2.0"
+[2/11/19 4:26:25 PM] }
+[2/11/19 4:26:25 PM] Initializing Host.
+[2/11/19 4:26:25 PM] Host initialization: ConsecutiveErrors=0, StartupCount=1
+[2/11/19 4:26:25 PM] Starting JobHost
+[2/11/19 4:26:25 PM] Starting Host (HostId=newpc02-502933657, InstanceId=7176da5f-062d-49ed-85df-c6ddd054b24c, Version=2.0.12134.0, ProcessId=74426, AppDomainId=1, Debug=False, FunctionsExtensionVersion=)
+[2/11/19 4:26:25 PM] Loading functions metadata
+[2/11/19 4:26:25 PM] 1 functions loaded
+[2/11/19 4:26:25 PM] Generating 1 job function(s)
+[2/11/19 4:26:25 PM] Found the following functions:
+[2/11/19 4:26:25 PM] AzureDatabaseComparison.HelloWorld.Run
+[2/11/19 4:26:25 PM] 
+[2/11/19 4:26:25 PM] Host initialized (244ms)
+[2/11/19 4:26:25 PM] Host started (259ms)
+[2/11/19 4:26:25 PM] Job host started
+Hosting environment: Production
+Content root path: /Users/darrenhale/code/github/AzureDatabaseComparison/bin/output
+Now listening on: http://0.0.0.0:7071
+Application started. Press Ctrl+C to shut down.
+Listening on http://0.0.0.0:7071/
+Hit CTRL-C to exit...
+
+Http Functions:
+
+	HelloWorld: http://localhost:7071/api/HelloWorld
+
+[2/11/19 4:26:30 PM] Host lock lease acquired by instance ID '0000000000000000000000002094B47E'.
+** Navigate to http://localhost:7071/api/HelloWorld?name=Me
+*** Hello, Me -> should appear in browser
+
