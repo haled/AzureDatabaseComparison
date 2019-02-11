@@ -42,6 +42,8 @@ Choose option:
 HelloWorld
 
 The function "HelloWorld" was created successfully from the "HttpTrigger" template.
+** Remove the following line from local.settings.json:
+        "AzureWebJobsStorage": "",
 ** Run the following command to test it:
 *** func start --build
 Azure Functions Core Tools (2.1.725 Commit hash: 68f448fe6a60e1cade88c2004bf6491af7e5f1df)
@@ -80,4 +82,6 @@ Http Functions:
 [2/11/19 4:26:30 PM] Host lock lease acquired by instance ID '0000000000000000000000002094B47E'.
 ** Navigate to http://localhost:7071/api/HelloWorld?name=Me
 *** Hello, Me -> should appear in browser
-
+** Reference Links
+*** https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local
+*** https://medium.com/@asavaritayal/azure-functions-on-kubernetes-75486225dac0
