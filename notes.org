@@ -1,3 +1,12 @@
+* TO DO List (C-c C-t toggles completion)
+** DONE Create and document function app
+** TODO Install and configure CosmosDB emulator
+** TODO Add function to save to CosmosDB
+** TODO Add function to save to SQL Server
+** TODO Configure my dev Azure for CosmosDB
+** TODO Configure my dev Azure for SQL Server
+** TODO Update function app to point to Azure databases
+** TODO Figure out how to compare and measure databases
 * Function App creation
 ** Run commands: 
 *** func init AzureDatabaseComparison --docker
