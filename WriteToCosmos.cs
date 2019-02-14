@@ -21,67 +21,26 @@ namespace AzureDatabaseComparison
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            string cosmosConnectionUri = "https://localhost:8081";
-            string databaseName = "CosmosTest";
-            string merchantCollectionName = "Merchants";
+            log.LogInformation("Connecting to {0}.", "https://localhost:8081");
             
-            // connect to CosmosDB
-            log.LogInformation("Connecting to {0}.", cosmosConnectionUri);
-            DocumentClient cosmosClient = new DocumentClient(new Uri(cosmosConnectionUri), "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
-
+            var repo = new CosmosRepository("https://localhost:8081","CosmosTest","Merchants", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+            
             // get database and collection
-            log.LogInformation("Get database {0} and collection {1}.", databaseName, merchantCollectionName);
-            var db = GetOrCreateDatabaseAsync(cosmosClient, databaseName);
-            var collection = GetOrCreateCollectionAsync(cosmosClient, databaseName, merchantCollectionName);
-            var collectionLink = UriFactory.CreateDocumentCollectionUri(databaseName, merchantCollectionName);
+//            log.LogInformation("Get database {0} and collection {1}.", databaseName, merchantCollectionName);
+            
 
             // create document
             log.LogInformation("Writing merchant object.");
             var merchant = MerchantFactory.CreateMerchant();
                      
-            var doc = await cosmosClient.CreateDocumentAsync(collectionLink, merchant);
+            //var doc = await cosmosClient.CreateDocumentAsync(collectionLink, merchant);
+            var doc = repo.CreateDoc(merchant);
 
             return doc != null
                 ? (ActionResult)new OkObjectResult("Wrote Merchant " +  merchant.Id)
                 : new BadRequestObjectResult("No document created.");
         }
 
-        // ***********************************************************************
-        // Below are functions swiped from CosmosDB C# sample (CosmosSample.cs)
-        // ***********************************************************************
         
-        private static async Task<DocumentCollection> GetOrCreateCollectionAsync(DocumentClient client, string databaseId, string collectionId)
-        {
-            var databaseUri = UriFactory.CreateDatabaseUri(databaseId);
-
-            DocumentCollection collection = client.CreateDocumentCollectionQuery(databaseUri)
-                .Where(c => c.Id == collectionId)
-                .AsEnumerable()
-                .FirstOrDefault();
-
-            if (collection == null)
-            {
-                collection = await client.CreateDocumentCollectionAsync(databaseUri, new DocumentCollection { Id = collectionId });
-            }
-
-            return collection;
-        }
-
-        private static async Task<Database> GetOrCreateDatabaseAsync(DocumentClient client, string databaseId)
-        {
-            var databaseUri = UriFactory.CreateDatabaseUri(databaseId);
-
-            Database database = client.CreateDatabaseQuery()
-                .Where(db => db.Id == databaseId)
-                .ToArray()
-                .FirstOrDefault();
-
-            if (database == null)
-            {
-                database = await client.CreateDatabaseAsync(new Database { Id = databaseId });
-            }
-
-            return database;
-        }
     }
 }
