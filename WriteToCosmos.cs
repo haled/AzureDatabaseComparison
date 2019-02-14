@@ -37,19 +37,12 @@ namespace AzureDatabaseComparison
 
             // create document
             log.LogInformation("Writing merchant object.");
-            var merchant = new Merchant {
-                Id = "1",
-                Name = "Test",
-                Ein = "12-3456789",
-                YearlyVolume = 22222.22m,
-                AverageTicket = 22.22m,
-                ContactName = "Mr. Me"
-            };
-            
+            var merchant = MerchantFactory.CreateMerchant();
+                     
             var doc = await cosmosClient.CreateDocumentAsync(collectionLink, merchant);
 
             return doc != null
-                ? (ActionResult)new OkObjectResult("Done")
+                ? (ActionResult)new OkObjectResult("Wrote Merchant " +  merchant.Id)
                 : new BadRequestObjectResult("No document created.");
         }
 
