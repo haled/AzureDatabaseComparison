@@ -21,19 +21,18 @@ namespace AzureDatabaseComparison
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("Connecting to {0}.", "https://localhost:8081");
+            var server = "https://localhost:8081";
+            var databaseName = "CosmosTest";
+            var collectionName = "Merchants";
+            var key = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             
-            var repo = new CosmosRepository("https://localhost:8081","CosmosTest","Merchants", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+            log.LogInformation("Connecting to {0}. Getting or creating db {1} and getting or creating collection {2}.", server, databaseName, collectionName);
             
-            // get database and collection
-//            log.LogInformation("Get database {0} and collection {1}.", databaseName, merchantCollectionName);
+            var repo = new CosmosRepository(server, databaseName, collectionName, key);
             
-
-            // create document
             log.LogInformation("Writing merchant object.");
             var merchant = MerchantFactory.CreateMerchant();
                      
-            //var doc = await cosmosClient.CreateDocumentAsync(collectionLink, merchant);
             var doc = repo.CreateDoc(merchant);
 
             return doc != null
