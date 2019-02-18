@@ -103,4 +103,11 @@ https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator
 ** Install CosmosDB Azure Functions extension
 func extensions install --package Microsoft.Azure.WebJobs.Extensions.CosmosDB --version 3.0.2
 *** How to install extensions: https://github.com/MicrosoftDocs/azure-docs/blob/master/includes/functions-core-tools-install-extension.md
-
+* SQL Server on Linux in Docker
+** using microsoft/mssql-server-linux:latest Docker image
+** Command to start the server
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -p 1433:1433 --name dhalesb_sql -v C:\darren\data:/home/data -v C:\darren\github\AzureDatabaseComparison:/opt/code -d microsoft/mssql-server-linux:latest
+** Connect to running container:
+docker exec -it dhalesb_sql "bash"
+** create a database:
+create database Merchant; go

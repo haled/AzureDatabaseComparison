@@ -1,34 +1,38 @@
+create database Merchant;
+
+use Merchant;
+
 create table Addresses (
-  add column Id varchar2(32),
-  add column MerchantId varchar2(32),
-  add column Address1 varchar2(50),
-  add column Address2 varchar2(50),
-  add column City varchar2(50),
-  add column State varchar2(2),
-  add column PostalCode varchar2(10)
-)
+   Id varchar(32),
+   MerchantId varchar(32),
+   Address1 varchar(50),
+   Address2 varchar(50),
+   City varchar(50),
+   State varchar(2),
+   PostalCode varchar(10)
+);
 
 create table Merchants (
-  add column Id varchar2(32),
-  add column Name varchar2(50),
-  add column Ein varchar2(11),
-  add column YearlyVolume money,
-  add column AverageTicket money
-)
+   Id varchar(32),
+   Name varchar(50),
+   Ein varchar(11),
+   YearlyVolume money,
+   AverageTicket money
+);
 
 create table Principals (
-  add column Id varchar2(32),
-  add column MerchantId varchar2(32),
-  add column FirstName varchar2(50),
-  add column LastName varchar2(50),
-  add column SSN varchar2(11),
-  add column OwnershipPercentage decimal
-)
+   Id varchar(32),
+   MerchantId varchar(32),
+   FirstName varchar(50),
+   LastName varchar(50),
+   SSN varchar(11),
+   OwnershipPercentage decimal
+);
 
 create table PricingElement (
-  add column Id varchar2(32),
-  add column MerchantId varchar2(32),
-  add column Name varchar2(25),
-  add column Rate decimal,
-  add column Fee decimal
-)
+   Id varchar(32),
+   MerchantId varchar(32),
+   Name varchar(25),
+   Rate decimal,
+   Fee decimal
+);
