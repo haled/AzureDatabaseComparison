@@ -109,5 +109,16 @@ func extensions install --package Microsoft.Azure.WebJobs.Extensions.CosmosDB --
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -p 1433:1433 --name dhalesb_sql -v C:\darren\data:/home/data -v C:\darren\github\AzureDatabaseComparison:/opt/code -d microsoft/mssql-server-linux:latest
 ** Connect to running container:
 docker exec -it dhalesb_sql "bash"
+** Use sqlcmd:
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -p 'P@ssw0rd' -Q '<query>'
 ** create a database:
 create database Merchant; go
+** Access DB outside container
+*** get IP address of box
+ipconfig
+*** connect using sqlcmd
+sqlcmd -S <ip_address>,1433 -U sa -P '<password>'
+** Install System.Data.SqlClient
+func extensions install --package System.Data.SqlClient --version 4.5.1
+** Reference Link
+https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-bash

@@ -13,9 +13,9 @@ namespace AzureDatabaseComparison
             _connectionString = connString;
         }
 
-        public bool CreateMerchant(Merchant merch)
+        public Merchant CreateMerchant(Merchant merch)
         {
-            using(SqlConnnection conn = new SqlConnection(_connectionString))
+            using(SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
 
@@ -23,25 +23,31 @@ namespace AzureDatabaseComparison
 
                 conn.Execute(merchantSql, merch);
 
-                var addressSql = "INSERT INTO Addresses (Id, MerchantId, Address1, Address2, City, State, PostalCode) VALUES (@newGuid, @Merchant.Id, @Address1, @Address2, @City, @State, @PostalCode)";
+                var addressSql = "INSERT INTO Addresses (Id, MerchantId, Address1, Address2, City, State, PostalCode) VALUES (@Merchant.BusinessAddress.Id, @Merchant.Id, @Merchant.BusinessAddress.Address1, @Merchant.BusinessAddress.Address2, @Merchant.BusinessAddress.City, @Merchant.BusinessAddress.State, @Merchant.BusinessAddress.PostalCode)";
                 
-                var newGuid = Guid.NewGuid();
-                conn.Execute(addressSql, newGuid, merch, merch.BusinessAddress);
+                merch.BusinessAddress.Id = Guid.NewGuid().ToString();
+                conn.Execute(addressSql, merch);
 
-                newGuid = Guid.NewGuid();
-                conn.Execute(addressSql, newGuid, merch, merch.MailingAddress);
+                merch.MailingAddress.Id = Guid.NewGuid().ToString();
+                conn.Execute(addressSql, merch);
 
-                var principalSql = "INSERT INTO Principals (Id, MerchantId, FirstName, LastName, SSN, OwnershipPerentage) VALUES (@principalGuid, @Merchant.Id, @FirstName, @LastName, @SSN, @OwnershipPercentage)";
+                var principalSql = "INSERT INTO Principals (Id, MerchantId, FirstName, LastName, SSN, OwnershipPerentage) VALUES (@Id, @Merchant.Id, @FirstName, @LastName, @SSN, @OwnershipPercentage)";
                 foreach(var principal in merch.Principals)
                 {
-                    var principalGuid = Guid.NewGuid();
-                    conn.Execute(principalSql, principalGuid, merch, principal);
+                    principal.Id = Guid.NewGuid().ToString();
+                    conn.Execute(principalSql, principal);
                 }
 
-                
+                var pricingSql = "INSERT INTO PricingElement (Id, MerchantId, Name, Rate, Fee) VALUES (@Id, @Merchant.Id, @Name, @Rate, @Fee)";
+                foreach(var pricing in merch.PricingPlan)
+                {
+                    pricing.Id = Guid.NewGuid().ToString();
+                    conn.Execute(pricingSql, pricing);
+                }
                 
                 conn.Close();
             }
+            return merch;
         }
 
         
