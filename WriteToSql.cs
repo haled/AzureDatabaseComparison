@@ -18,14 +18,22 @@ namespace AzureDatabaseComparison
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            return SqlWriter.Write(log);
+        }
+    }
+
+    public static class SqlWriter
+    {
+        public static IActionResult Write(ILogger log)
+        {
             var connectionString = "Data Source=localhost;Initial Catalog=Merchant;User ID=sa;Password=P@ssw0rd;Connection Timeout=25;";
             
             log.LogInformation("Using connection string -> {0}", connectionString);
             
             var repo = new SqlRepository(connectionString);
             
-            log.LogInformation("Writing merchant object.");
             var merchant = MerchantFactory.CreateMerchant();
+            log.LogInformation("Writing merchant object with ID {0}.", merchant.Id);
 
             var message = "";
             Merchant doc = null;
@@ -43,7 +51,5 @@ namespace AzureDatabaseComparison
                 ? (ActionResult)new OkObjectResult(message)
                 : new BadRequestObjectResult(message);
         }
-
-        
     }
 }

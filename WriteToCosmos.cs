@@ -21,6 +21,16 @@ namespace AzureDatabaseComparison
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            return CosmosWriter.Write(log);
+        }
+
+        
+    }
+
+    public static class CosmosWriter
+    {
+        public static ActionResult Write(ILogger log)
+        {
             var server = "https://localhost:8081";
             var databaseName = "CosmosTest";
             var collectionName = "Merchants";
@@ -39,7 +49,5 @@ namespace AzureDatabaseComparison
                 ? (ActionResult)new OkObjectResult("Wrote Merchant " +  merchant.Id)
                 : new BadRequestObjectResult("No document created.");
         }
-
-        
     }
 }
