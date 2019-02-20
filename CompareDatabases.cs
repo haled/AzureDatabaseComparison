@@ -18,29 +18,52 @@ namespace AzureDatabaseComparison
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            // log.LogInformation("Using connection string -> {0}", connectionString);
+            int numberToTest = 100;
             
+            // SQL test
+            log.LogInformation("Starting SQL test.");
+            int sqlSuccess = 0;
+            int sqlFailure = 0;
+            var sqlTestStart = DateTime.Now;
+            for(int i = 0; i < numberToTest; i++)
+            {
+                var response = SqlWriter.Write(log);
+                if(response.GetType() == typeof(OkObjectResult))
+                {
+                    sqlSuccess++;
+                }
+                else
+                {
+                    sqlFailure++;
+                }
+            }
+            var sqlTestEnd = DateTime.Now;
+            var sqlResults = new TestResults(sqlTestStart, sqlTestEnd, numberToTest, sqlSuccess, sqlFailure, "sql");
 
-            // log.LogInformation("Writing merchant object with ID {0}.", merchant.Id);
+            log.LogInformation("Starting Cosmos test.");
+            // Cosmos Test
+            int cosmosSuccess = 0;
+            int cosmosFailure = 0;
+            var cosmosTestStart = DateTime.Now;
+            for(int i = 0; i < numberToTest; i++)
+            {
+                var response = CosmosWriter.Write(log);
+                if(response.GetType() == typeof(OkObjectResult))
+                {
+                    cosmosSuccess++;
+                }
+                else
+                {
+                    cosmosFailure++;
+                }
+            }
+            var cosmosTestEnd = DateTime.Now;
+            var cosmosResults = new TestResults(cosmosTestStart, cosmosTestEnd, numberToTest, cosmosSuccess, cosmosFailure, "cosmos");
 
-            // int numberToTest = 100;
+            log.LogInformation(sqlResults.Results);
+            log.LogInformation(cosmosResults.Results);
             
-            // // SQL test
-            // var sqlTestStart = DateTime.Now;
-            // for(int i = 0; i < numberToTest; i++)
-            // {
-            //     var response = await WriteToSql.
-            // }
-            // var sqlTestEnd = DateTime.Now;
-            
-
-            // // Cosmos Test
-
-
-            // return doc != null
-            //     ? (ActionResult)new OkObjectResult(message)
-            //     : new BadRequestObjectResult(message);
-            return (ActionResult) new OkObjectResult("test");
+            return (ActionResult)new OkObjectResult(sqlResults.Results + "\n" + cosmosResults.Results);
         }
 
         
@@ -50,10 +73,10 @@ namespace AzureDatabaseComparison
     {
         public string Results {get; set;}
 
-        public TestResults(DateTime start, DateTime end, int totalCount, int success, int fail)
+        public TestResults(DateTime start, DateTime end, int totalCount, int success, int fail, string name)
         {
             var duration = end.Subtract(start);
-            Results = string.Format("Ran {0} in {1} sec.", totalCount, duration.Seconds);
+            Results = string.Format("Ran {4} {0} with {2} successes and {3} failures in {1} sec.", totalCount, duration.Seconds, success, fail, name);
         }
     }
 }

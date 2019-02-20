@@ -23,8 +23,6 @@ namespace AzureDatabaseComparison
         {
             return CosmosWriter.Write(log);
         }
-
-        
     }
 
     public static class CosmosWriter
