@@ -3,10 +3,30 @@
 ** DONE Install and configure CosmosDB emulator
 ** DONE Add function to save to CosmosDB
 ** DONE Add function to save to SQL Server
-** TODO Configure my dev Azure for CosmosDB
-** TODO Configure my dev Azure for SQL Server
-** TODO Update function app to point to Azure databases
+** DONE Configure my dev Azure for CosmosDB
+** DONE Configure my dev Azure for SQL Server
+** DONE Update function app to point to Azure databases
 ** DONE Figure out how to compare and measure databases
+** TODO Create function to read from CosmosDB
+** TODO Create function to read from SQL Server
+** TODO Test read performance
+** Presentations
+*** TODO Azure Function Creation and Development
+**** What is the story arc? Why do people care?
+*** TODO Exploring CosmosDB
+**** Explore how to interact with it
+**** Explore the local emulator
+**** What question am I trying to answer?
+***** Is it really as expensive as people claim?
+***** How can I practically use this technology?
+** Blog Post Ideas
+*** Developing an Azure Function locally
+*** Interacting with CosmosDB using the emulator
+*** Using SQL Server on Linux in Docker for Development
+*** Comparing SQL Server elastic pool to CosmosDB
+**** ease of creation
+**** speed of development
+**** cost of Azure resources
 * Function App creation
 ** Run commands: 
 *** func init AzureDatabaseComparison --docker
@@ -122,3 +142,67 @@ sqlcmd -S <ip_address>,1433 -U sa -P '<password>'
 func extensions install --package System.Data.SqlClient --version 4.5.1
 ** Reference Link
 https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-bash
+* Azure setup
+** Use Visual Studio Professional subscription
+** create resource group for this stuff
+** create Cosmos DB account
+*** account name: cosmos-experiment
+*** API:  Core (SQL)
+*** Location: Central US
+*** Geo-Redundancy:  Enable
+*** Multi-region Writes:  Enable
+*** Create
+*** URI:  https://cosmos-experiment.documents.azure.com:443/
+*** Primary Key: <key>
+** create SQL account
+*** Database Name: Performance_Experiment
+*** Subscription:  Visual Studio Professional
+*** Resource Group: experiment_functions_cosmos
+*** Select source:  Blank database
+*** Configure required settings ->
+**** Server name: performanceexperiment
+**** server admin login:  dhale
+**** password:  <my password>
+**** Location: Central US
+**** Allow Azure services to access server:  Checked
+**** Advanced Data Security:  Not now
+*** Want to use SQL elastic pool?  Yes
+*** Collation:  SQL_Latin1_General_CP1_CI_AS
+*** Create
+*** Connection String: Server=tcp:performanceexperiment.database.windows.net,1433;Initial Catalog=Performance_Experiment;Persist Security Info=False;User ID=dhale;Password=<my password>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+** Azure Function
+*** create a storage account
+**** Subscription:  Visual Studio Professional
+**** Resource Group:  experiment_functions_cosmos
+**** Storage account name:  dehcosmostest
+**** Location:  Central US
+**** Performance: Standard
+**** Account Kind:  StorageV2 (general purpose v2)
+**** Replication: Locally-redundant storage (LRS)
+**** Access tier: Hot
+**** Create
+**** 
+*** create function app
+**** az login
+**** az functionapp create --resource-group experiment_functions_cosmos --consumption-plan-location centralus --name AzureDatabaseComparison --storage-account dehcosmostest
+*** deploy function app (after changing connection strings)
+****  func azure functionapp publish AzureDatabaseComparison --force
+***** the --force was necessary because the tooling to create the function app created a v1 app and I need a v2 app (I'm also using the v2 tooling)
+*** Endpoints
+Functions in AzureDatabaseComparison:
+    CompareDatabases - [httpTrigger]
+        Invoke url: https://azuredatabasecomparison.azurewebsites.net/api/comparedatabases?code=8IAaLwRxefw4pY/aIWDsmjU11x10OT6gxBkpzdHKHU6sqS2d0/VQkg==
+
+    HelloWorld - [httpTrigger]
+        Invoke url: https://azuredatabasecomparison.azurewebsites.net/api/helloworld?code=5UarxZV8Y2fN/avxRcObTghgTaYtMkctagjVGR6Y4Jkuii1vYGmQLA==
+
+    WriteToCosmos - [httpTrigger]
+        Invoke url: https://azuredatabasecomparison.azurewebsites.net/api/writetocosmos?code=Bhub56shP6AdVfcrCKwbwD2MhxEXOf51a4XvQaMgLCXNTbLmz8H9iQ==
+
+    WriteToSql - [httpTrigger]
+        Invoke url: https://azuredatabasecomparison.azurewebsites.net/api/writetosql?code=IahNWLsHuZLVlgs6HFPto0YNcb8l3xGPVfLmoxSCmttEilnC3LHBPw==
+** Run the CompareDatabases function
+*** Initial results
+Ran sql 100 with 100 successes and 0 failures in 9 sec.
+Ran cosmos 100 with 100 successes and 0 failures in 12 sec.
+*** 
